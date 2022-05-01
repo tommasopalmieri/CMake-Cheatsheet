@@ -4,7 +4,9 @@
 %
 % MIT License
 %
-% 
+% Modified 5/1/2022, Tommaso Palmieri, tp@tommasopalmieri.com.
+% Format changed to letter paper, code formatting dome using minted.
+% Added info about Debug/Build compiler flags.
 %
 % LaTeX Template
 % Version 1.0 (12/12/15)
@@ -25,13 +27,28 @@
 %	PACKAGES AND OTHER DOCUMENT CONFIGURATIONS
 %----------------------------------------------------------------------------------------
 
-\documentclass[11pt,a4paper,landscape]{scrartcl} % 11pt font size
+\documentclass[11pt,letter,landscape]{scrartcl} % 11pt font size
 
 \usepackage[utf8]{inputenc} % Required for inputting international characters
 \usepackage[T1]{fontenc} % Output font encoding for international characters
 
 \usepackage[margin=30pt, landscape]{geometry} % Page margins and orientation
-
+\usepackage{minted}
+\setminted[text]{%
+    autogobble=true,
+    breaklines=true,
+    frame=single}
+\setminted[bash]{linenos=true,
+    autogobble=true,
+    breaklines=true,
+    frame=single}
+\setminted[cpp]{linenos=true,
+    autogobble=true,
+    breaklines=true,
+    frame=single}
+\setminted[cmake]{
+    breaklines=true,
+    frame=single}
 \usepackage{graphicx} % Required for including images
 \usepackage{listings}
 \usepackage{multicol}
@@ -46,10 +63,10 @@
 
 \usepackage{xparse}
 \usepackage[ % This block contains information used to annotate the PDF
-colorlinks=false, 
-pdftitle={CMake Cheatsheet}, 
-pdfauthor={Morten Nobel-Jørgensen}, 
-pdfsubject={A gentle introduction to CMake}, 
+colorlinks=false,
+pdftitle={CMake Cheatsheet},
+pdfauthor={Morten Nobel-Jørgensen},
+pdfsubject={A gentle introduction to CMake},
 pdfkeywords={Cross-platform development, Open Source, CMake}
 ]{hyperref}
 
@@ -72,7 +89,7 @@ pdfkeywords={Cross-platform development, Open Source, CMake}
 \begin{document}
 
 %----------------------------------------------------------------------------------------
-%	TITLE SECTION 
+%	TITLE SECTION
 %----------------------------------------------------------------------------------------
 
 
@@ -92,26 +109,20 @@ pdfkeywords={Cross-platform development, Open Source, CMake}
 
 This cheatsheet will give you an idea how CMake works and how it can be used to configure software projects.
 
-The document and the CMake examples are available at  \url{https://github.com/mortennobel/CMake-Cheatsheet}. 
+The document and the CMake examples are available at  \url{https://github.com/mortennobel/CMake-Cheatsheet}.
 
 \sectiontitle{CMake - Creating a simple C++ project}
-			 
-CMake is a tool for configuring how a cross-platform source code project should be built on a given platform. 
 
-A small project could be organized like this: 
+CMake is a tool for configuring how a cross-platform source code project should be built on a given platform.
 
-\vspace{\baselineskip} % Whitespace before the next section
+A small project could be organized like this:
 
-\noindent\fbox{%
-    \parbox{\columnwidth}{%
-CMakeLists.txt \\
-src/main.cpp \\
-src/foo.cpp\\
+\begin{minted}{text}
+CMakeLists.txt
+src/main.cpp
+src/foo.cpp
 src/foo.hpp
-}%
-}
-
-\vspace{\baselineskip} % Whitespace before the next section
+\end{minted}
 
 This project contains two source files located in the src directory and one header file in the include directory in the same directory.
 
@@ -123,9 +134,9 @@ Running CMake will not create the final executable, but instead, it will generat
 
 Creating project files using CMake requires a \codeword{CMakeLists.txt} file, which describes how the project is structured and how it should be built.
 
-For example 1 the file looks like this: 
+For example 1 the file looks like this:
 
-\lstinputlisting[language=bash]{examples/example1/CMakeLists.txt}
+\inputminted{cmake}{examples/example1/CMakeLists.txt}
 
 First, the minimum version of CMake is defined. Then the project name is defined using the command \codeword{project()}. A project can contain multiple targets (either executables or libraries). This project defines a single executable target called \codeword{Hello}, which is created by compiling and linking the two source files \codeword{main.cpp} and \codeword{foo.cpp} files.
 
@@ -135,36 +146,36 @@ When the two source files are compiled the compiler will search for the header f
 
 The CMakeLists.txt describes the build process using a command based programming language. The commands are case insensitive and take a list of arguments.
 
-\begin{lstlisting}[language=bash]
+\begin{minted}{cmake}
 # This is a comment.
 COMMAND( arguments go here )
 ANOTHER_COMMAND() # this command has no arguments
 YET_ANOTHER_COMMAND( these
-  arguments are spread         # another comment 
+  arguments are spread         # another comment
   over several lines )
-\end{lstlisting}
+\end{minted}
 
 CMake script also has variables. Variables can either be defined by CMake or can be defined in the CMake script.  The command \codeword{set(parameter value)} set a given parameter to a value. The command \codeword{message(value)} print out the value to the console. To get the value of a variable use \codeword{${varname}}, which substitutes the variable name with its value.
 
-\lstinputlisting[language=bash]{examples/example2/CMakeLists.txt}
+\inputminted{cmake}{examples/example2/CMakeLists.txt}
 
 All variable values are a text string. Text strings can be evaluated as boolean expressions (e.g. when used in \codeword{IF()} and \codeword{WHILE()}). The values "FALSE", "OFF", "NO", or any string ending in "-NOTFOUND" evaluates be false - everything else to true.
 
 Text strings can represent multiple values as a list by separating entities using a semicolon.
 
-\lstinputlisting[language=bash]{examples/example3/CMakeLists.txt}
+\inputminted{cmake}{examples/example3/CMakeLists.txt}
 
 Lists can be iterated using the command \codeword{FOREACH (var val)}:
 
-\lstinputlisting[language=bash]{examples/example4/CMakeLists.txt}
-			
+\inputminted{cmake}{examples/example4/CMakeLists.txt}
+
 \sectiontitle{Exposing compile options}
-			
+
 CMake allows the end user (who runs CMake) to modify some values of some variables.  This is usually used to defined properties of the build such as locations of files, machine architecture, and string values.
 
 The command \codeword{set(<variable> <value> CACHE <type> <docstring>)} set the variable to the default value - but allows the value to be changed by the cmake user when configuring the build. The type should be one of the following:
 
-\begin{itemize}  
+\begin{itemize}
 \item FILEPATH = File chooser dialog.
 \item PATH     = Directory chooser dialog.
 \item STRING   = Arbitrary string.
@@ -173,16 +184,18 @@ The command \codeword{set(<variable> <value> CACHE <type> <docstring>)} set the 
 \end{itemize}
 
 In the following example, the user can configure if "Hello" or an alternative string should be printed based on the configuration variables hello and other\_msg.
- 
-\lstinputlisting[language=bash]{examples/example5/CMakeLists.txt}
+
+\inputminted{cmake}{examples/example5/CMakeLists.txt}
 
 During configuration of the project, the CMake user gets prompted with the exposed options.
-
-\includegraphics[width=\columnwidth]{variable-options}
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.7\columnwidth]{variable-options}
+\end{figure}
 
 The values that the CMake user enters will be saved in the text file \codeword{CMakeCache.txt} as key-value pairs:
 
-\begin{lstlisting}[language=bash]
+\begin{minted}{text}
 // ....
 //Print hello
 hello:BOOL=OFF
@@ -190,64 +203,57 @@ hello:BOOL=OFF
 //Not hello value
 other_msg:STRING=Guten tag
 // ....
-\end{lstlisting}
+\end{minted}
 
 \sectiontitle{Complex projects}
 
 Some project both contains multiple executables and multiple libraries. For instance when having both unit tests and programs. It is common to separate these subprojects into subfolders. Example:
-
-\vspace{\baselineskip} % Whitespace before the next section
-\noindent\fbox{%
-    \parbox{\columnwidth}{%
-CMakeLists.txt \\
-somelib/CMakeLists.txt \\
-somelib/foo.hpp \\
-somelib/foo.cpp \\
-someexe/CMakeLists.txt\\
+\begin{minted}{text}
+CMakeLists.txt
+somelib/CMakeLists.txt
+somelib/foo.hpp
+somelib/foo.cpp
+someexe/CMakeLists.txt
 someexe/main.cpp
-}%
-}
+\end{minted}
 
 \vspace{\baselineskip} % Whitespace before the next section
 
 The main \codeword{CMakeLists.txt} contains the basic project settings but then includes the subprojects:
 
-\lstinputlisting[language=bash]{examples/example6/CMakeLists.txt}
+\inputminted{cmake}{examples/example6/CMakeLists.txt}
 
 First the library Foo is compiled from the source in the  \codeword{somelib} directory:
 
-\lstinputlisting[language=bash]{examples/example6/somelib/CMakeLists.txt}
+\inputminted{cmake}{examples/example6/somelib/CMakeLists.txt}
 
 Finally, the executable Hello is compiled and linked to the Foo library - note that the target name is used here - not the actual path. Since the main.cpp references to header file Foo.hpp the somelib directory is added to the header search path:
 
-\lstinputlisting[language=bash]{examples/example6/someexe/CMakeLists.txt}
+\inputminted{cmake}{examples/example6/someexe/CMakeLists.txt}
 
 \sectiontitle{Searching for source files}
 
 Use the \codeword{find(GLOB varname patterns)} to automatically search for files within a directory given one or more search patterns. Note that in the example below, both source files and header files are added to the project. This is not needed for compiling the project, but it is convenient when using an IDE since this also adds the header files to the project.
 
-\lstinputlisting[language=bash]{examples/example6-find/CMakeLists.txt}
+\inputminted{cmake}{examples/example6-find/CMakeLists.txt}
 
 \sectiontitle{Runtime resources}
 
 Often runtime resources (such as DLLs, game-assets and text files) are read relative to the executable. One solution is to copy resources into the same directory as the executable. Example:
 
-\vspace{\baselineskip} % Whitespace before the next section
-\noindent\fbox{%
-    \parbox{\columnwidth}{%
+\begin{minted}{text}
 CMakeLists.txt \\
 someexe/main.cpp \\
 someexe/res.txt
-}%
-}
+\end{minted}
 
 In this project, the source files assume that the resource is located in the same directory as the executable:
 
-\lstinputlisting[language=c++]{examples/example7/someexe/main.cpp}
+\inputminted{cpp}{examples/example7/someexe/main.cpp}
 
-The CMakeLists.txt make sure to copy the file. 
+The CMakeLists.txt make sure to copy the file.
 
-\lstinputlisting[language=bash]{examples/example7/CMakeLists.txt}
+\inputminted{cmake}{examples/example7/CMakeLists.txt}
 
 Note: One problem with this approach is if you modify the original resources, then you need to run CMake again.
 
@@ -255,17 +261,17 @@ Note: One problem with this approach is if you modify the original resources, th
 
 External libraries basically come in two flavors; dynamically linked libraries (DLLs) which are linked with the binary at runtime and statical linked libraries which are linked at compile time.
 
-Static libraries have the most simple setup. To use one, the compiler needs to know the location of where to locate the header files and the linker need to know the location of the actual library. Unless the external libraries are distributed along with the project it is usually not possible to know their location - for this reason, it is common to use cached variables, where the CMake user can change the location. Static libraries have the file ending .lib on Windows and .a on most other platforms. 
+Static libraries have the most simple setup. To use one, the compiler needs to know the location of where to locate the header files and the linker need to know the location of the actual library. Unless the external libraries are distributed along with the project it is usually not possible to know their location - for this reason, it is common to use cached variables, where the CMake user can change the location. Static libraries have the file ending .lib on Windows and .a on most other platforms.
 
-\lstinputlisting[language=bash]{examples/example8/CMakeLists.txt}
+\inputminted{cmake}{examples/example8/CMakeLists.txt}
 
 Dynamically linked libraries work similar to statical linked libraries. On Windows, it is still needed to link to a library at compile time, but the actual linking to the DLL happens at compile time. The executable file needs to be able to find the DLL file in the runtime linkers search path. If the DLL is not a system library, an easy solution is to copy the DLL next to the executable. Working with DLL often requires platform specific actions, which CMake support using the built-in variables \codeword{WIN32}, \codeword{APPLE}, \codeword{UNIX}.
 
-\lstinputlisting[language=bash]{examples/example9/CMakeLists.txt}
+\inputminted{cmake}{examples/example9/CMakeLists.txt}
 
 \sectiontitle{Automatically locating libraries}
 
-CMake also contains a feature to automatically find libraries (based on a number of suggested locations) using the command \codeword{find_package()}. However, this feature works best on macOS and Linux. 
+CMake also contains a feature to automatically find libraries (based on a number of suggested locations) using the command \codeword{find_package()}. However, this feature works best on macOS and Linux.
 
 \url{https://cmake.org/Wiki/CMake:How_To_Find_Libraries}.
 
@@ -273,25 +279,38 @@ CMake also contains a feature to automatically find libraries (based on a number
 
 The C++ version can be set using the commands:
 
-\begin{lstlisting}[language=bash]
+\begin{minted}{cmake}
 set(CMAKE_CXX_STANDARD 14)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 set(CMAKE_CXX_EXTENSIONS OFF)
-\end{lstlisting}
+\end{minted}
+\sectiontitle{Debug vs. Release}
 
+You can set different debug and release flags for the C++ compiler
+
+\begin{minted}{cmake}
+# Applies for both Debug and Release
+set(CMAKE_CXX_FLAGS "-std=c++17")
+
+# Debug only
+set(CMAKE_CXX_FLAGS_DEBUG_INIT "-Og")
+
+#Release only.
+set(CMAKE_CXX_FLAGS_RELEASE_INIT "-O3")
+\end{minted}
 \sectiontitle{Defining preprocessor symbols}
 
 Use the \codeword{add_definitions()} to add preprocessor symbols to the project.
 
-\begin{lstlisting}[language=bash]
+\begin{minted}{cmake}
 # ...
 add_definitions(-DFOO=\"XXX\")
 add_definitions(-DBAR)
-\end{lstlisting}
+\end{minted}
 
 This will create the symbols \codeword{FOO} and \codeword{BAR}, which can be used in the source code:
 
-\begin{lstlisting}[language=c++]
+\begin{minted}{cpp}
 #include <iostream>
 
 using namespace std;
@@ -304,7 +323,7 @@ int main(){
 
     return 0;
 }
-\end{lstlisting}
+\end{minted}
 
 \vspace{\baselineskip} % Whitespace before the next section
 
@@ -327,13 +346,9 @@ int main(){
 {\color{mygray}\line(1,0){30}} % Print the line with a custom color
 
 \footnotesize{
-Created by Morten Nobel-Jørgensen, mnob@itu.dk, ITU, 2017\\ 
-
-Released under the MIT license. \\
-
-Latex template by John Smith, 2015\\ 
+Created by Morten Nobel-Jørgensen, mnob@itu.dk, ITU, 2017\\
+Latex template by John Smith, 2015\\
 \url{http://johnsmith.com/}\\
-				
 Released under the MIT license.
 }
 
